@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from Homepage import views
 
+
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('signin/', views.sign_in, name='signin'),
     path('signup/', views.sign_up, name='signup'),
     path('presentation/', views.presentation, name='presentation'),
     path('admin/', admin.site.urls),
+    path('update-time-range/', views.update_time_range, name='update_time_range'),  # Add this line
 ]
