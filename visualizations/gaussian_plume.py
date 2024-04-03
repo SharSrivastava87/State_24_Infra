@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+
 import matplotlib.image as mimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib.colors import LinearSegmentedColormap
@@ -6,6 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import image
 import pandas as pd
 import random
+matplotlib.use('SVG')
 
 
 csv_file = "EOG-Resources-Dataset-main/sensor_readings.csv"
@@ -192,7 +195,7 @@ def plt_plume(regions, direction):
         c = ax.contourf(grid.xMesh[0], grid.yMesh[0],
                         concField, 100, cmap=new_cmap)
 
-    image = plt.imread('map2.jpg')
+    image = plt.imread('visualizations/map2.jpg')
     ax.imshow(image)
     ax.axis('off')
     plt.tight_layout()
@@ -209,9 +212,23 @@ def call_plume(df_row):
         present = present[:2]
     fig = plt_plume(present, df_row['direction'])
     return fig
-df = pd.read_csv('gaussian_plume.csv')
 
 
-f = call_plume(df.iloc[53])
 
-f.savefig('plume.png')
+def plt_plume_hour(hour):
+    df = pd.read_csv('visualizations/gaussian_plume.csv')
+    row = df.iloc[len(df)*hour//24+ random.randint(5, len(df)//24-1)]
+    f = call_plume(df.iloc[53])
+    return f
+
+# df = pd.read_csv('gaussian_plume.csv')
+
+
+# f = call_plume(df.iloc[53])
+
+# f.savefig('plume.png')
+
+
+for i in range(0,24):
+    f = plt_plume_hour(i)
+    f.savefig(f"temp/plume{i}.png")
