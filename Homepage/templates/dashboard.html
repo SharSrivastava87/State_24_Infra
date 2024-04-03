@@ -264,12 +264,12 @@
     <!-- End Navbar -->
 
     <div class="row mt-4">
-        <div class="col-12 mt-4 mb-4">
+        <div class="col-11 mt-4 mb-4">
             <div class="card z-index-2" style="color: transparent;">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                    <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
-                        <div class="chart">
-                            <canvas id="elongated-chart" class="chart-canvas" height="100"></canvas>
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style="">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pe-1">
+                        <div class="chart p-3"  id="prediction" hx-swap="innerHTML" hx-trigger="predictionupdate" hx-get="">
+                            <img src="../static/assets/img/predictionplaceholder.png" style="max-width: 100%">
                         </div>
                         <div class="antenna">
                             <div class="bleeping-light"></div>
@@ -277,9 +277,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <h6 class="mb-0">Elongated Chart</h6>
+                    <h6 class="mb-0">Prediction Chart</h6>
                     <p class="text-sm">Overview of Data</p>
-                        <div class="slider-container">
+                        <div class="slider-container" id="hourslider" hidden>
                             <input type="range" id="timeRange" name="timeRange" min="1" max="23" value="1" class="slider" onchange="updateSlider(this.value);">
                             <label for="timeRange" id="sliderValueLabel">1:00</label>
                         </div>
@@ -292,18 +292,35 @@
 
     <!-- Gaussian plum visualization and upload data cube -->
     <div class="row">
-        <div class="col-lg-8">
-            <!-- Placeholder for Gaussian plum visualization -->
-            <div class="visualization-placeholder"
-                 style="height: 400px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; text-align: center;">
-                <p>Gaussian Plum Visualization Goes Here</p>
-            </div>
+        {% comment %} GOHERE {% endcomment %}
+        <div class="col-lg-8 p-4" style="margin-right:-80px; margin-left:-20px; margin-top: -22px;" id="visualization" hx-swap="innerHTML" hx-trigger="visualizationupdate" hx-get="">
+            <img src="../static/assets/img/visualizationplaceholder.png" width="90%">            
         </div>
         <div class="col-lg-4">
-            <div class="upload-data-cube"
-                 style="height: 400px; background-color: #fff; border: 1px solid #ddd; display: flex; justify-content: center; align-items: center;">
-                <button class="btn btn-primary">Upload Data</button>
+
+            <div class="upload-data-cube d-flex align-items-center justify-content-center flex-column" style="height: 400px; background-color: #fff; border: 1px solid #ddd; padding: 20px;">
+                <h5 class="text-center mb-3">Upload Data</h5>
+                <div class="custom-file" style="width: 100%; margin-bottom: 20px;">
+                    <input type="file" class="custom-file-input" id="fileUpload" style="position: relative; z-index: 2; width: 100%; height: calc(2.25rem + 2px); overflow: hidden;margin-left:75px">
+                </div>
+                <button class="btn btn-primary" id="upload" disabled  onclick="updateSlider(1)">Upload</button>
             </div>
+
+            <script>
+                const fileUpload = document.getElementById("fileUpload")
+                const upload = document.getElementById("upload")
+                const hourslider = document.getElementById("hourslider")
+                fileUpload.addEventListener("input", () => {
+                    if (fileUpload.value != "") {
+                        upload.disabled = false
+                        hourslider.hidden = false
+                    } else {
+                        upload.disabled = true
+                        hourslider.hidden = false
+
+                    }
+                })
+            </script>
         </div>
     </div>
 
@@ -390,344 +407,30 @@
 <script src="../static/assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="../static/assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="../static/assets/js/plugins/chartjs.min.js"></script>
-<script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
 
-    new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["M", "T", "W", "T", "F", "S", "S"],
-            datasets: [{
-                label: "Sales",
-                tension: 0.4,
-                borderWidth: 0,
-                borderRadius: 4,
-                borderSkipped: false,
-                backgroundColor: "rgba(255, 255, 255, .8)",
-                data: [50, 20, 10, 22, 50, 10, 40],
-                maxBarThickness: 6
-            },],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 500,
-                        beginAtZero: true,
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                        color: "#fff"
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0,
-                borderWidth: 0,
-                pointRadius: 5,
-                pointBackgroundColor: "rgba(255, 255, 255, .8)",
-                pointBorderColor: "transparent",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderWidth: 4,
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
-    new Chart(ctx3, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0,
-                borderWidth: 0,
-                pointRadius: 5,
-                pointBackgroundColor: "rgba(255, 255, 255, .8)",
-                pointBorderColor: "transparent",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderWidth: 4,
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        padding: 10,
-                        color: '#f8f9fa',
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-</script>
-<script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-</script>
 <!-- Github buttons -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="../static/assets/js/material-dashboard.min.js?v=3.1.0"></script>
-<script>
-    var ctxElongated = document.getElementById('elongated-chart').getContext('2d');
-    new Chart(ctxElongated, {
-        type: 'bar',
-        data: {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            datasets: [{
-                label: 'Data Overview',
-                data: [50, 20, 10, 22, 50, 10, 40],
 
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
 <script>
 function updateSlider(value) {
     document.getElementById('sliderValueLabel').innerHTML = value + ':00';
-    // Send the value to the backend using Fetch API or similar
-    fetch('/update-time-range/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'), // Get the CSRF token
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 'timeRange': value })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Handle response data
-        console.log(data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+    let vis = document.getElementById('visualization');
+    vis.setAttribute("hx-get", '/visualize/' + value);
+    htmx.process(vis);
+    htmx.trigger("#visualization", "visualizationupdate");
+
+    let pred = document.getElementById('prediction')
+    pred.setAttribute("hx-get", "/graph/"+value);
+    htmx.process(pred);
+    htmx.trigger("#prediction", "predictionupdate");
+
+    
 }
 
-// Function to get the CSRF token
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 </script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js" integrity="sha512-9KsixJxn00SQfLkrArzXRFi3QyqP4RyIzYgj2Ho4YJSLEOHS00uhDQdc7dv6N8PS5OsYZWKiY0/7DsZRlcv/DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </body>
 

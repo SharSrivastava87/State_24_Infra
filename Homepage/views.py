@@ -19,12 +19,6 @@ def sign_up(request):
 def presentation(request):
     return render(request, 'tables.html')
 
-def update_time_range(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        time_range = data['timeRange']
-        return JsonResponse({'status': 'success', 'time_range': time_range})
-
 
 # Helper
 def image_to_base64(image):
@@ -40,3 +34,8 @@ def visualize_data(request, hour):
     image64 = image_to_base64(image)
     return render(request, 'visualization.html', {'plume': image64})
     
+
+def graph_data(request, hour):
+    image = Image.open(f'Sensor_Graphs/prediction_v_time{hour}.0.png')
+    image64 = image_to_base64(image)
+    return render(request, 'graph.html', {'prediction': image64})

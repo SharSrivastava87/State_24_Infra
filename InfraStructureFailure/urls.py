@@ -25,6 +25,6 @@ urlpatterns = [
     path('signup/', views.sign_up, name='signup'),
     path('presentation/', views.presentation, name='presentation'),
     path('admin/', admin.site.urls),
-    path('update-time-range/', views.update_time_range, name='update_time_range'),  # Add this line
     path('visualize/<int:hour>/', views.visualize_data, name='visualize_data'),  # Add this line
+    path('graph/<int:hour>/', views.graph_data, name='graph_data'),  # Add this line
 ]
