@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from PIL import Image
 from io import BytesIO
 import base64
+import time
 
 
 import json
@@ -32,10 +33,12 @@ def image_to_base64(image):
 def visualize_data(request, hour):
     image = Image.open(f'plumes/plume{hour}.png')
     image64 = image_to_base64(image)
+    time.sleep(1.1)
     return render(request, 'visualization.html', {'plume': image64})
     
 
 def graph_data(request, hour):
     image = Image.open(f'Sensor_Graphs/prediction_v_time{hour}.0.png')
     image64 = image_to_base64(image)
+    time.sleep(1.1)
     return render(request, 'graph.html', {'prediction': image64})
