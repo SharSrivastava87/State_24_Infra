@@ -301,7 +301,7 @@
             <div class="upload-data-cube d-flex align-items-center justify-content-center flex-column" style="height: 400px; background-color: #fff; border: 1px solid #ddd; padding: 20px;">
                 <h5 class="text-center mb-3">Upload Data</h5>
                 <div class="custom-file" style="width: 100%; margin-bottom: 20px;">
-                    <input type="file" class="custom-file-input" id="fileUpload" style="position: relative; z-index: 2; width: 100%; height: calc(2.25rem + 2px); overflow: hidden;margin-left:75px">
+                    <input type="file" class="custom-file-input" id="fileUpload" style="position: relative; z-index: 2; width: 100px; height: calc(2.25rem + 2px); overflow: hidden;margin-left:125px">
                 </div>
                 <button class="btn btn-primary" id="upload" disabled  onclick="updateSlider(1)">Upload</button>
             </div>
@@ -425,12 +425,40 @@ function updateSlider(value) {
     pred.setAttribute("hx-get", "/graph/"+value);
     htmx.process(pred);
     htmx.trigger("#prediction", "predictionupdate");
-
+    showFullScreenLoading();
     
 }
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js" integrity="sha512-9KsixJxn00SQfLkrArzXRFi3QyqP4RyIzYgj2Ho4YJSLEOHS00uhDQdc7dv6N8PS5OsYZWKiY0/7DsZRlcv/DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div id="loading-overlay" style="display:none;">Processing...</div>
+<style>
+    #loading-overlay {
+        position: fixed; /* Use fixed positioning to cover the whole screen */
+        top: 0;
+        left: 0;
+        width: 100vw; /* Viewport width */
+        height: 100vh; /* Viewport height */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+        color: white; /* White text color */
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        font-size: 20px;
+        z-index: 1000; /* Ensure it sits on top of other content */
+    }
+</style>
+<script>
+    function showFullScreenLoading() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Use 'flex' to enable flexbox centering
+    
+        setTimeout(() => {
+            overlay.style.display = 'none'; // Hide the overlay after 1 second
+        }, 1100); // 1000 milliseconds = 1 second
+    }
+</script>  
 
 </body>
 
